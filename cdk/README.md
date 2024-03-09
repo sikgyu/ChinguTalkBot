@@ -1,14 +1,47 @@
-# Welcome to your CDK TypeScript project
+## Environment Setup
 
-This is a blank project for CDK development with TypeScript.
+To create CDK, I used the following code:
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+```jsx
+mkdir cdk
+cd cdk
+npm install -g aws-cdk
+cdk init app --language typescript
+```
 
-## Useful commands
+**constructs directory**
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `npx cdk deploy`  deploy this stack to your default AWS account/region
-* `npx cdk diff`    compare deployed stack with current state
-* `npx cdk synth`   emits the synthesized CloudFormation template
+The directory is structured to maintain modular constructs, making the infrastructure code more manageable and scalable. I created constructs directory in the lib folder and added `auth.ts` file.
+
+**Key Componenets:**
+
+- **UserPool:** Defines the user pool with specific password policies and sign-in options, facilitating self-signup and ensuring security standards.
+- **UserPoolClient:** Creates a client application within the user pool to manage user interactions and session handling.
+
+**Outputs:**
+
+- **UserPoolId:** The identifier for the created user pool.
+- **UserPoolClientId:** The identifier for the user pool client application.
+
+
+## **Integration into CDK Stack**
+
+The Auth construct is integrated into the main CDK stack, **`ChinguTalkStack`**, to provision the necessary AWS Cognito resources:
+
+```jsx
+const auth = new Auth(this, "Auth");
+```
+
+
+### **CDK Deployment**
+
+After defining our infrastructure as code using AWS CDK, we proceed with deploying our resources to the cloud. This process is handled by the **`cdk deploy`** command. Here’s how we executed the deployment for our project:
+
+1. Navigate to your project's root directory in the terminal.
+2. Run the **`cdk deploy`** command.
+    
+    ```bash
+    bashCopy code
+    cdk deploy
+    
+    ```
