@@ -1,4 +1,5 @@
 import { Construct } from "constructs";
+import { ITable } from "aws-cdk-lib/aws-dynamodb";
 import { HttpApi, CorsHttpMethod } from "aws-cdk-lib/aws-apigatewayv2";
 import { CfnOutput, Duration } from "aws-cdk-lib";
 import { Auth } from "./auth";
@@ -6,7 +7,7 @@ import { Auth } from "./auth";
 
 export interface ApiProps {
     readonly auth: Auth;
-  }
+}
 
 
 export class Api extends Construct {

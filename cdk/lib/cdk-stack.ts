@@ -2,6 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { Auth } from "./constructs/auth";
 import { Api } from "./constructs/api";
+import { Database } from "./constructs/database";
 
 
 export class ChinguTalkStack extends cdk.Stack {
@@ -10,8 +11,9 @@ export class ChinguTalkStack extends cdk.Stack {
 
 
     const auth = new Auth(this, "Auth");
+    const database = new Database(this, "Database");
     const api = new Api(this, "Api", {
-      auth: auth,
+      auth
     });
 
     new cdk.CfnOutput(this, "ApiEndpoint", {
