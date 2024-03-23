@@ -1,49 +1,31 @@
 import json
-import logging
 import os
 from datetime import datetime
 from decimal import Decimal as decimal
 
 import boto3
 from boto3.dynamodb.conditions import Key
-from repositories.common import (
-    TABLE_NAME,
-    TRANSACTION_BATCH_SIZE,
-    RecordNotFoundError,
-    _get_dynamodb_client,
-    _get_table_client,
-    # compose_bot_id,
-    compose_conv_id,
-    decompose_conv_id,
-)
+
 from .model import ContentModel, ConversationModel, MessageModel
 
-TABLE_NAME = os.environ.get("TABLE_NAME", "ChinguTalkStack-DatabaseConversationTable03F3FD7A-10K7ZKMWAH820")
-REGION = os.environ.get("REGION", "us-west-2")
+TABLE_NAME = os.environ.get("TABLE_NAME", "")
+REGION = os.environ.get("REGION", "ap-northeast-1")
 
 dynamodb = boto3.resource("dynamodb", region_name=REGION)
 
-logger = logging.getLogger(__name__)
 
 def store_conversation(user_id, conversation: ConversationModel):
-    logger.info(f"Storing conversation: {conversation.model_dump_json()}")
-    table = _get_table_client(user_id)
-
-    item_params = {
-        "PK": user_id,
-        "SK": compose_conv_id(user_id, conversation.id),
-        "Title": conversation.title,
-        "CreateTime": decimal(conversation.create_time),
-        "MessageMap": json.dumps(
-            {k: v.model_dump() for k, v in conversation.message_map.items()}
-        ),
-        "LastMessageId": conversation.last_message_id,
-    }
-    if conversation.bot_id:
-        item_params["BotId"] = conversation.bot_id
-
+    table = dynamodb.Table(TABLE_NAME)
     response = table.put_item(
-        Item=item_params,
+        Item={
+            "UserId": user_id,
+            "ConversationId": conversation.id,
+            "Title": conversation.title,
+            "CreateTime": decimal(conversation.create_time),
+            "Messages": json.dumps(
+                [message.model_dump() for message in conversation.messages]
+            ),
+        }
     )
     return response
 

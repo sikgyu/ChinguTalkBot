@@ -12,13 +12,12 @@ import {
 } from "aws-cdk-lib/aws-cloudfront";
 import { NodejsBuild } from "deploy-time-build";
 import { Auth } from "./auth";
+import { IHttpApi } from "aws-cdk-lib/aws-apigatewayv2";
 
 export interface FrontendProps {
-  readonly backendApiEndpoint: string;
-  readonly webSocketApiEndpoint: string;
+  readonly backendApi: IHttpApi;
   readonly auth: Auth;
   readonly accessLogBucket: IBucket;
-  readonly webAclId: string;
 }
 
 export class Frontend extends Construct {
@@ -70,7 +69,6 @@ export class Frontend extends Construct {
         bucket: props.accessLogBucket,
         prefix: "Frontend/",
       },
-      webACLId: props.webAclId,
     });
 
     new NodejsBuild(this, "ReactBuild", {
@@ -83,12 +81,10 @@ export class Frontend extends Construct {
       ],
       buildCommands: ["npm run build"],
       buildEnvironment: {
-        VITE_APP_API_ENDPOINT: props.backendApiEndpoint,
-        VITE_APP_WS_ENDPOINT: props.webSocketApiEndpoint,
-        VITE_APP_USER_POOL_ID: props.auth.userPool.userPoolId,
-        VITE_APP_USER_POOL_CLIENT_ID: props.auth.client.userPoolClientId,
-        VITE_APP_REGION: Stack.of(props.auth.userPool).region,
-        VITE_APP_USE_STREAMING: "true",
+        VITE_APP_API_ENDPOINT: props.backendApi.apiEndpoint,
+        VITE_USER_POOL_ID: props.auth.userPool.userPoolId,
+        VITE_USER_POOL_CLIENT_ID: props.auth.client.userPoolClientId,
+        VITE_AWS_REGION: Stack.of(props.auth.userPool).region,
       },
       destinationBucket: assetBucket,
       distribution,
@@ -96,9 +92,5 @@ export class Frontend extends Construct {
     });
 
     this.cloudFrontWebDistribution = distribution;
-  }
-
-  getOrigin(): string {
-    return `https://${this.cloudFrontWebDistribution.distributionDomainName}`;
   }
 }

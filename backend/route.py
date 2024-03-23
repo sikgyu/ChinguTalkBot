@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 from repositories.conversation import (
     change_conversation_title,

@@ -1,15 +1,12 @@
 import os
 from typing import List
-import logging
 
 from repositories.model import MessageModel
 
-logger = logging.getLogger(__name__)
 
 def is_running_on_lambda():
-    in_lambda = 'AWS_EXECUTION_ENV' in os.environ
-    logger.info(f'Running on Lambda: {in_lambda}')
-    return in_lambda
+    return "AWS_EXECUTION_ENV" in os.environ
+
 
 def get_buffer_string(conversations: List[MessageModel]) -> str:
     string_messages = []
