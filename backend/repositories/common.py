@@ -4,8 +4,8 @@ import os
 import boto3
 
 DDB_ENDPOINT_URL = os.environ.get("DDB_ENDPOINT_URL")
-TABLE_NAME = os.environ.get("TABLE_NAME", "ChinguTalkStack-DatabaseConversationTable03F3FD7A-10K7ZKMWAH820")
-ACCOUNT = os.environ.get("ACCOUNT", "424706728006")
+TABLE_NAME = os.environ.get("TABLE_NAME", "")
+ACCOUNT = os.environ.get("ACCOUNT", "")
 REGION = os.environ.get("REGION", "us-west-2")
 TABLE_ACCESS_ROLE_ARN = os.environ.get("TABLE_ACCESS_ROLE_ARN", "")
 TRANSACTION_BATCH_SIZE = 25
@@ -36,8 +36,8 @@ def _get_aws_resource(service_name, user_id=None):
             return boto3.resource(
                 service_name,
                 endpoint_url=DDB_ENDPOINT_URL,
-                aws_access_key_id="AKIAWFYT6MBDLCQR5S4Q",
-                aws_secret_access_key="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",
+                aws_access_key_id="",
+                aws_secret_access_key="",
                 region_name=REGION,
             )
         else:
